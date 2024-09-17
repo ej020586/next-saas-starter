@@ -6,6 +6,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { stripe } from '@/lib/payments/stripe';
 import Stripe from 'stripe';
 
+const CHECKOUT_USER_ERROR = 'Error with checking out, please try again.';
+
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const sessionId = searchParams.get('session_id');
@@ -61,7 +63,7 @@ export async function GET(request: NextRequest) {
       .limit(1);
 
     if (user.length === 0) {
-      throw new Error('User not found in database.');
+      throw new Error(CHECKOUT_USER_ERROR);
     }
 
     const userTeam = await db
@@ -73,7 +75,7 @@ export async function GET(request: NextRequest) {
       .limit(1);
 
     if (userTeam.length === 0) {
-      throw new Error('User is not associated with any team.');
+      throw new Error(CHECKOUT_USER_ERROR);
     }
 
     await db

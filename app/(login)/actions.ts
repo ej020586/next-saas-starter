@@ -49,6 +49,8 @@ const signInSchema = z.object({
   password: z.string().min(8).max(100),
 });
 
+const SIGN_IN_ERROR = 'User credentials invalid, please try again.';
+
 export const signIn = validatedAction(signInSchema, async (data, formData) => {
   const { email, password } = data;
 
@@ -64,7 +66,7 @@ export const signIn = validatedAction(signInSchema, async (data, formData) => {
     .limit(1);
 
   if (userWithTeam.length === 0) {
-    return { error: 'User not found. Please try again.' };
+    return { error: SIGN_IN_ERROR };
   }
 
   const { user: foundUser, team: foundTeam } = userWithTeam[0];
@@ -75,7 +77,7 @@ export const signIn = validatedAction(signInSchema, async (data, formData) => {
   );
 
   if (!isPasswordValid) {
-    return { error: 'Incorrect password. Please try again.' };
+    return { error: SIGN_IN_ERROR };
   }
 
   await Promise.all([
